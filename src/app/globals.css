@@ -19,6 +19,21 @@
   }
 } */
 
+@layer theme {
+  @theme {
+    --color-lamaSky: #c3ebfa;
+    --color-lamaSkylight: #edf9fd;
+    --color-lamaPurple: #cfceff;
+    --color-lamaPurpleLight: #f1f0ff;
+    --color-lamaYellow: #fae27c;
+    --color-lamaYellowLight: #fefce8;
+
+    /* Если хочешь использовать как обычные цвета Tailwind */
+    --color-lama-sky: var(--color-lamaSky);
+    --color-lama-skylight: var(--color-lamaSkylight);
+    /* и т.д. */
+  }
+}
 body {
   background: var(--background);
   color: var(--foreground);
