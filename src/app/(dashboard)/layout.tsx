@@ -11,10 +11,10 @@ export default function DashboardLayout({
   return (
     <div className="h-screen flex">
       {/* Left */}
-      <div className="w-[14%] md:w-[8%] llg:w-[16%] xl:w-[14%]">
+      <div className="w-[14%] md:w-[8%] lg:w-[16%] xl:w-[14%] p-4">
         <Link
           href="/"
-          className="flex  items-center justify-center gap-2 lg:justify-start p-4">
+          className="flex  items-center justify-center gap-2 lg:justify-start">
           <Image
             src="/logo.png"
             alt="logo"
@@ -22,12 +22,12 @@ export default function DashboardLayout({
             width={32}
             height={32}
           />
-          <span className="hidden lg:block">SchoolLama</span>
+          <span className="hidden lg:block font-bold">SchoolLama</span>
         </Link>
         <Menu />
       </div>
       {/* Right */}
-      <div className="w-[86%] md:w-[92%] llg:w-[84%] xl:w-[86%] bg-[#F7F8FA] overflow-scroll">
+      <div className="w-[86%] md:w-[92%] llg:w-[84%] xl:w-[86%] bg-[#F7F8FA] overflow-scroll flex flex-col">
         <Navbar />
         {children}
       </div>
