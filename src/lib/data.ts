@@ -921,33 +921,33 @@ export const calendarEvents = [
   {
     title: "Gym",
     allDay: false,
-    start: new Date(2025, 10, 16, 8, 0), // ноябрь = 10 месяц (считается с 0)
-    end: new Date(2025, 10, 16, 8, 45),
+    start: new Date(2025, 11, 1, 8, 0), // ноябрь = 10 месяц (считается с 0)
+    end: new Date(2025, 11, 1, 8, 45),
   },
 
   {
     title: "English",
     allDay: false,
-    start: new Date(2025, 10, 16, 9, 0),
-    end: new Date(2025, 10, 16, 9, 45),
+    start: new Date(2025, 11, 1, 9, 0),
+    end: new Date(2025, 11, 1, 9, 45),
   },
   {
     title: "Biology",
     allDay: false,
-    start: new Date(2025, 10, 16, 10, 0),
-    end: new Date(2025, 10, 16, 10, 45),
+    start: new Date(2025, 11, 2, 10, 0),
+    end: new Date(2025, 11, 2, 10, 45),
   },
   {
     title: "Physics",
     allDay: false,
-    start: new Date(2025, 10, 16, 11, 0),
-    end: new Date(2025, 10, 16, 11, 45),
+    start: new Date(2025, 11, 3, 11, 0),
+    end: new Date(2025, 11, 3, 11, 45),
   },
   {
     title: "Chemistry",
     allDay: false,
-    start: new Date(2025, 10, 16, 13, 0),
-    end: new Date(2025, 10, 16, 13, 45),
+    start: new Date(2025, 11, 3, 13, 0),
+    end: new Date(2025, 11, 3, 13, 45),
   },
   {
     title: "History",
