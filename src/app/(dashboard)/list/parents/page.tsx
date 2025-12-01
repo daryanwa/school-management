@@ -1,6 +1,7 @@
 import Announcements from "@/app/components/Announcements";
 import BigCalendar from "@/app/components/BigCalender";
 import EventCalendar from "@/app/components/EventCalendar";
+import FormModal from "@/app/components/FormModal";
 import Pagination from "@/app/components/Pagination";
 import Table from "@/app/components/Table";
 import TableSearch from "@/app/components/TableSearch";
@@ -65,9 +66,10 @@ const renderRow = (item: Parent) => {
             </button>
           </Link>
           {role === "admin" && (
-            <button className="w-7 h-7 flex items-center justify-center rounded-full bg-lamaPurple">
-              <Image src="/delete.png" alt="" width={16} height={16} />
-            </button>
+          <>
+            <FormModal table="parent" type="update" data={item} />
+            <FormModal table="parent" type="delete" id={item.id} />
+          </>
           )}
         </div>
       </td>
@@ -91,9 +93,8 @@ const ParentsListPage = () => {
               <Image src="/sort.png" alt="filter" width={14} height={14} />
             </button>
             {role === "admin" && (
-              <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
-                <Image src="/plus.png" alt="filter" width={14} height={14} />
-              </button>
+              
+              <FormModal table="parent" type="create" />
             )}
           </div>
         </div>
