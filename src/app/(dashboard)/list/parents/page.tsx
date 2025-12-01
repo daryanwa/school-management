@@ -60,16 +60,11 @@ const renderRow = (item: Parent) => {
 
       <td>
         <div className="flex items-center gap-2">
-          <Link href="/list/teachers/${item.id}">
-            <button className="w-7 h-7 flex items-center justify-center rounded-full bg-lamaSky">
-              <Image src="/edit.png" alt="" width={16} height={16} />
-            </button>
-          </Link>
           {role === "admin" && (
-          <>
-            <FormModal table="parent" type="update" data={item} />
-            <FormModal table="parent" type="delete" id={item.id} />
-          </>
+            <>
+              <FormModal table="parent" type="update" data={item} />
+              <FormModal table="parent" type="delete" id={item.id} />
+            </>
           )}
         </div>
       </td>
@@ -92,10 +87,7 @@ const ParentsListPage = () => {
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
               <Image src="/sort.png" alt="filter" width={14} height={14} />
             </button>
-            {role === "admin" && (
-              
-              <FormModal table="parent" type="create" />
-            )}
+            {role === "admin" && <FormModal table="parent" type="create" />}
           </div>
         </div>
       </div>

@@ -82,9 +82,6 @@ const renderRow = (item: Student) => {
             </button>
           </Link>
           {role === "admin" && (
-            // <button className="w-7 h-7 flex items-center justify-center rounded-full bg-lamaPurple">
-            //   <Image src="/delete.png" alt="" width={16} height={16} />
-            // </button>
             <FormModal table="student" type="delete" id={item.id} />
           )}
         </div>
