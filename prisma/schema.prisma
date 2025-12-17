@@ -6,6 +6,7 @@
 
 generator client {
   provider = "prisma-client"
+  // output   = "../src/generated/prisma"
   output   = "../src/generated/prisma"
 }
 
@@ -81,8 +82,8 @@ model Class {
   name          String         @unique
   capacity      Int
   lessons       Lesson[]
-  supervisoId   String
-  supervisor    Teacher        @relation(fields: [supervisoId], references: [id])
+  supervisoId   String?
+  supervisor    Teacher?        @relation(fields: [supervisoId], references: [id])
   student       Student[]
   gradeId       Int
   grade         Grade          @relation(fields: [gradeId], references: [id])
