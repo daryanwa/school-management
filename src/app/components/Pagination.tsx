@@ -1,18 +1,51 @@
+"use client";
+import { ITEM_PER_PAGE } from "@/lib/settings";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 
-const Pagination = ({page, count}: {page: number, count: number}) => {
+const Pagination = ({ page, count }: { page: number; count: number }) => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const totalPages = Math.max(1, Math.ceil(count / ITEM_PER_PAGE));
+
+  const changePage = (newPage: number) => {
+    if (newPage < 1 || newPage > totalPages) return;
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", newPage.toString());
+
+    router.push(`${pathname}?${params.toString()}`);
+  };
+
   return (
     <div className="p-4 items-center justify-between flex text-gray-500">
       <button
-        disabled
-        className=" py-2 px-4 rounded-md bg-slate-200 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed">
+        onClick={() => changePage(page - 1)}
+        disabled={page <= 1}
+        className="py-2 px-4 rounded-md bg-slate-200 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed">
         Prev
       </button>
       <div className="flex items-center gap-2 text-sm">
-        <button className="px-2 rounded-sm bg-lama-sky">1</button>
-      
+        {Array.from({ length: totalPages }, (_, index) => {
+          const pageIndex = index + 1;
+          return (
+            <button
+              onClick={() => changePage(pageIndex)}
+              key={pageIndex}
+              className={`px-2 rounded-sm ${
+                page === pageIndex ? "bg-lama-sky" : ""
+              }`}>
+              {pageIndex}
+            </button>
+          );
+        })}
       </div>
-      <button className=" py-2 px-4 rounded-md bg-slate-200 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed">
+      <button
+        onClick={() => changePage(page + 1)}
+        disabled={page >= totalPages}
+        className="py-2 px-4 rounded-md bg-slate-200 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed">
         Next
       </button>
     </div>
