@@ -30,6 +30,7 @@ const columns = [
     accessor: "teacher",
     className: "hidden md:table-cell",
   },
+
   {
     header: "Date",
     accessor: "date",
@@ -42,6 +43,8 @@ const columns = [
   },
 ];
 
+
+// dawd
 const renderRow = (item: ExamList) => {
   return (
     <tr
