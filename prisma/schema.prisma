@@ -84,7 +84,7 @@ model Class {
   lessons       Lesson[]
   supervisoId   String?
   supervisor    Teacher?        @relation(fields: [supervisoId], references: [id])
-  student       Student[]
+  students       Student[]
   gradeId       Int
   grade         Grade          @relation(fields: [gradeId], references: [id])
   events        Event[]

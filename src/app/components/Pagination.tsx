@@ -4,6 +4,12 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 
 const Pagination = ({ page, count }: { page: number; count: number }) => {
+
+// одна из вариаций disabled параметра кнопки вперед и назад, но я сделал это через className
+  // const hasPrev = ITEM_PER_PAGE * (page - 1) > 0
+  // const hasNext = ITEM_PER_PAGE * (page - 1)  + ITEM_PER_PAGE < count
+
+
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -24,7 +30,7 @@ const Pagination = ({ page, count }: { page: number; count: number }) => {
       <button
         onClick={() => changePage(page - 1)}
         disabled={page <= 1}
-        className="py-2 px-4 rounded-md bg-slate-200 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed">
+        className={`py-2 px-4 rounded-md bg-slate-200 text-xs font-semibold disabled:opacity-50 ${page >= totalPages ? "hover:cursor-pointer" : "disabled:cursor-not-allowed" }`}>
         Prev
       </button>
       <div className="flex items-center gap-2 text-sm">
@@ -34,7 +40,7 @@ const Pagination = ({ page, count }: { page: number; count: number }) => {
             <button
               onClick={() => changePage(pageIndex)}
               key={pageIndex}
-              className={`px-2 rounded-sm ${
+              className={` hover:cursor-pointer px-2 rounded-sm ${
                 page === pageIndex ? "bg-lama-sky" : ""
               }`}>
               {pageIndex}
@@ -45,7 +51,7 @@ const Pagination = ({ page, count }: { page: number; count: number }) => {
       <button
         onClick={() => changePage(page + 1)}
         disabled={page >= totalPages}
-        className="py-2 px-4 rounded-md bg-slate-200 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed">
+        className={`py-2 px-4 rounded-md bg-slate-200 text-xs font-semibold disabled:opacity-50 ${page >= totalPages ? "disabled:cursor-not-allowed" : "hover:cursor-pointer"}`}>
         Next
       </button>
     </div>
