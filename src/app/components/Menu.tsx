@@ -126,40 +126,59 @@ const menuItems = [
 
 
 const Menu = async() => {
+  try {
+    const user = await currentUser();
+    const role = user?.publicMetadata?.role as string | undefined;
 
+    // Для отладки (можно убрать после проверки)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Menu - User:', user?.id);
+      console.log('Menu - Role:', role);
+      console.log('Menu - PublicMetadata:', user?.publicMetadata);
+    }
 
-  // const {isLoaded, isSignedIn, user} = useUser()
-
-  // const role = user?.publicMetadata.role
-
-  const user = await currentUser();
-  const role = user?.publicMetadata.role as string;
- 
-
-  return (
-    <div className="mt-4 text-sm">
-      {menuItems.map((i) => (
-        <div className="flex flex-col gap-2" key={i.title}>
-          <span className="hidden lg:block text-gray-400 font-light my-4">
-            {i.title}
-          </span>
-          {i.items.map((item) => {
-            if (role && item.visible.includes(String(role))) {
-              return (
-                <Link
-                  href={item.href}
-                  key={item.label}
-                  className="flex items-center justify-center lg:justify-start gap-4 text-gray-500 py-2 md:px-2 rounded-md hover:bg-lamaSkyLight">
-                  <Image src={item.icon} alt="" width={20} height={20} />
-                  <span className="hidden lg:block">{item.label}</span>
-                </Link>
-              );
-            }
-          })}
+    if (!role) {
+      console.warn('Menu: Role not found in user publicMetadata');
+      return (
+        <div className="mt-4 text-sm text-gray-500">
+          <p className="text-xs">Loading menu...</p>
         </div>
-      ))}
-    </div>
-  );
+      );
+    }
+
+    return (
+      <div className="mt-4 text-sm">
+        {menuItems.map((i) => (
+          <div className="flex flex-col gap-2" key={i.title}>
+            <span className="hidden lg:block text-gray-400 font-light my-4">
+              {i.title}
+            </span>
+            {i.items.map((item) => {
+              if (role && item.visible.includes(String(role))) {
+                return (
+                  <Link
+                    href={item.href}
+                    key={item.label}
+                    className="flex items-center justify-center lg:justify-start gap-4 text-gray-500 py-2 md:px-2 rounded-md hover:bg-lamaSkyLight">
+                    <Image src={item.icon} alt="" width={20} height={20} />
+                    <span className="hidden lg:block">{item.label}</span>
+                  </Link>
+                );
+              }
+              return null;
+            })}
+          </div>
+        ))}
+      </div>
+    );
+  } catch (error) {
+    console.error('Menu component error:', error);
+    return (
+      <div className="mt-4 text-sm text-red-500">
+        <p className="text-xs">Error loading menu</p>
+      </div>
+    );
+  }
 };
 
 export default Menu;

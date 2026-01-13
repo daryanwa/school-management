@@ -11,7 +11,6 @@ import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { currentUser } from "@clerk/nextjs/server";
 import Image from "next/image";
-import Link from "next/link";
 import React from "react";
 
 type ResultList = {
@@ -26,7 +25,42 @@ type ResultList = {
   startTime: Date;
 };
 
-const columns = [
+// const columns = [
+//   { header: "Subject Name", accessor: "name" },
+//   {
+//     header: "Teacher",
+//     accessor: "teacher",
+//     className: "hidden md:table-cell",
+//   },
+//   {
+//     header: "Score",
+//     accessor: "score",
+//     className: "hidden md:table-cell",
+//   },
+//   {
+//     header: "Student",
+//     accessor: "student",
+//   },
+
+//   {
+//     header: "Class",
+//     accessor: "class",
+//     className: "hidden md:table-cell",
+//   },
+
+//   {
+//     header: "Date",
+//     accessor: "date",
+//     className: "hidden md:table-cell",
+//   },
+
+//   {
+//     header: "Action",
+//     accessor: "actions",
+//   },
+// ];
+
+const getColumns = (role: string | undefined) => [
   { header: "Subject Name", accessor: "name" },
   {
     header: "Teacher",
@@ -55,57 +89,59 @@ const columns = [
     className: "hidden md:table-cell",
   },
 
-  {
-    header: "Action",
-    accessor: "actions",
-  },
+  ...(role === "admin" || role === "teacher"
+    ? [
+        {
+          header: "Action",
+          accessor: "actions",
+        },
+      ]
+    : []),
 ];
 
 const createRenderRow = (role: string | undefined) => (item: ResultList) => {
   return (
     <tr
-    key={item.id}
-    className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight"
-  >
-    <td className="flex items-center gap-4 p-4">{item.title}</td>
-    <td>{item.studentName + " " + item.studentName}</td>
-    <td className="hidden md:table-cell">{item.score}</td>
-    <td className="hidden md:table-cell">
-      {item.teacherName + " " + item.teacherSurname}
-    </td>
-    <td className="hidden md:table-cell">{item.className}</td>
-    <td className="hidden md:table-cell">
-      {new Intl.DateTimeFormat("en-US").format(item.startTime)}
-    </td>
-    <td>
-      <div className="flex items-center gap-2">
-        {(role === "admin" || role === "teacher") && (
-          <>
-            <FormModal table="result" type="update" data={item} />
-            <FormModal table="result" type="delete" id={item.id} />
-          </>
-        )}
-      </div>
-    </td>
-  </tr>
+      key={item.id}
+      className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight">
+      <td className="flex items-center gap-4 p-4">{item.title}</td>
+      <td>{item.studentName + " " + item.studentName}</td>
+      <td className="hidden md:table-cell">{item.score}</td>
+      <td className="hidden md:table-cell">
+        {item.teacherName + " " + item.teacherSurname}
+      </td>
+      <td className="hidden md:table-cell">{item.className}</td>
+      <td className="hidden md:table-cell">
+        {new Intl.DateTimeFormat("en-US").format(item.startTime)}
+      </td>
+      <td>
+        <div className="flex items-center gap-2">
+          {(role === "admin" || role === "teacher") && (
+            <>
+              <FormModal table="result" type="update" data={item} />
+              <FormModal table="result" type="delete" id={item.id} />
+            </>
+          )}
+        </div>
+      </td>
+    </tr>
   );
 };
 
 const ResultsListPage = async ({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | undefined };
+  searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-
-
-  const { page, ...queryParams } = searchParams;
+  const resolvedSearchParams = await searchParams;
+  const { page, ...queryParams } = resolvedSearchParams;
 
   const p = page ? parseInt(page) : 1;
 
   // URL PARAMS CONDITION
 
-  const user = await currentUser()
-  const role = user?.publicMetadata?.role as string | undefined
+  const user = await currentUser();
+  const role = user?.publicMetadata?.role as string | undefined;
 
   const query: Prisma.ResultWhereInput = {};
 
@@ -161,7 +197,6 @@ const ResultsListPage = async ({
     prisma.result.count({ where: query }),
   ]);
 
-
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
       {/* top */}
@@ -185,7 +220,11 @@ const ResultsListPage = async ({
         </div>
       </div>
       {/* list */}
-      <Table columns={columns} renderRow={createRenderRow(role)} data={dataRes} />
+      <Table
+        columns={getColumns(role)}
+        renderRow={createRenderRow(role)}
+        data={dataRes}
+      />
       <div className=""></div>
       {/* pagination */}
       <div className="">

@@ -1,4 +1,3 @@
-
 import FormModal from "@/app/components/FormModal";
 import Pagination from "@/app/components/Pagination";
 import Table from "@/app/components/Table";
@@ -10,10 +9,9 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import Image from "next/image";
 import React from "react";
 
-
 type AnnouncementList = Announcement & { class: Class };
 
-const columns = [
+const getColumns = (role: string | undefined) => [
   { header: "Title", accessor: "title" },
   {
     header: "Class",
@@ -24,60 +22,57 @@ const columns = [
     accessor: "date",
     className: "hidden md:table-cell",
   },
-
-  {
-    header: "Action",
-    accessor: "actions",
-  },
+  ...(role === "admin"
+    ? [
+        {
+          header: "Action",
+          accessor: "actions",
+        },
+      ]
+    : []),
 ];
 
-
-
-
-
-const createRenderRow = (role: string | undefined) => (item: AnnouncementList) => {
-  return (
-    <tr
-    key={item.id}
-    className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight"
-  >
-    <td className="flex items-center gap-4 p-4">{item.title}</td>
-    <td>{item.class?.name || "-"}</td>
-    <td className="hidden md:table-cell">
-      {new Intl.DateTimeFormat("en-US").format(item.date)}
-    </td>
-    <td>
-      <div className="flex items-center gap-2">
-        {role === "admin" && (
-          <>
-            <FormModal table="announcement" type="update" data={item} />
-            <FormModal table="announcement" type="delete" id={item.id} />
-          </>
-        )}
-      </div>
-    </td>
-  </tr>
-  );
-};
+const createRenderRow =
+  (role: string | undefined) => (item: AnnouncementList) => {
+    return (
+      <tr
+        key={item.id}
+        className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight">
+        <td className="flex items-center gap-4 p-4">{item.title}</td>
+        <td>{item.class?.name || "-"}</td>
+        <td className="hidden md:table-cell">
+          {new Intl.DateTimeFormat("en-US").format(item.date)}
+        </td>
+        <td>
+          <div className="flex items-center gap-2">
+            {role === "admin" && (
+              <>
+                <FormModal table="announcement" type="update" data={item} />
+                <FormModal table="announcement" type="delete" id={item.id} />
+              </>
+            )}
+          </div>
+        </td>
+      </tr>
+    );
+  };
 
 const AnnouncementListPage = async ({
   searchParams,
 }: {
   searchParams: { [key: string]: string | undefined };
 }) => {
-
   const { page, ...queryParams } = searchParams;
 
   const p = page ? parseInt(page) : 1;
 
   // URL PARAMS CONDITION
 
-  const user = await currentUser()
-  const role = user?.publicMetadata?.role as string | undefined
+  const user = await currentUser();
+  const role = user?.publicMetadata?.role as string | undefined;
 
   // const {sessionClaims} = await auth();
   // const role = sessionClaims?.role as string | undefined;
-
 
   const query: Prisma.AnnouncementWhereInput = {};
 
@@ -107,12 +102,13 @@ const AnnouncementListPage = async ({
     prisma.announcement.count({ where: query }),
   ]);
 
-
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
       {/* top */}
       <div className="flex items-center justify-between">
-        <h1 className="hidden md:block text-lg font-semibold">All Announcements</h1>
+        <h1 className="hidden md:block text-lg font-semibold">
+          All Announcements
+        </h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           <TableSearch />
           <div className="flex items-center gap-4 self-end">
@@ -129,7 +125,11 @@ const AnnouncementListPage = async ({
         </div>
       </div>
       {/* list */}
-      <Table columns={columns} renderRow={createRenderRow(role)} data={data} />
+      <Table
+        columns={getColumns(role)}
+        renderRow={createRenderRow(role)}
+        data={data}
+      />
       <div className=""></div>
       {/* pagination */}
       <div className="">
