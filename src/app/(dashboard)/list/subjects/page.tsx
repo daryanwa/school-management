@@ -1,17 +1,17 @@
-import Announcements from "@/app/components/Announcements";
-import BigCalendar from "@/app/components/BigCalender";
-import EventCalendar from "@/app/components/EventCalendar";
 import FormModal from "@/app/components/FormModal";
 import Pagination from "@/app/components/Pagination";
-import Table from "@/app/components/Table";
 import TableSearch from "@/app/components/TableSearch";
 import { Prisma, Subject, Teacher } from "@/generated/prisma/client";
-import { role, subjectsData } from "@/lib/data";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
+import Table from "@/app/components/Table";
+import { currentUser } from "@clerk/nextjs/server";
 import Image from "next/image";
-import Link from "next/link";
 import React from "react";
+
+
+
+
 
 type SubjectList = Subject & {teachers : Teacher[]}  
 
@@ -29,7 +29,7 @@ const columns = [
   },
 ];
 
-const renderRow = (item: SubjectList) => {
+const createRenderRow = (role: string | undefined) => (item: SubjectList) => {
   return (
     <tr
       key={item.id}
@@ -61,6 +61,8 @@ const SubjectsListPage = async({searchParams} : {searchParams: {[key: string]: s
 
   // url params conditiob
 
+  const user = await currentUser()
+  const role = user?.publicMetadata?.role as string | undefined
 
   const query: Prisma.SubjectWhereInput = {}
 
@@ -114,7 +116,7 @@ const SubjectsListPage = async({searchParams} : {searchParams: {[key: string]: s
         </div>
       </div>
       {/* list */}
-      <Table columns={columns} renderRow={renderRow} data={data} />
+      <Table columns={columns} renderRow={createRenderRow(role)} data={data} />
       <div className=""></div>
       {/* pagination */}
       <div className="">

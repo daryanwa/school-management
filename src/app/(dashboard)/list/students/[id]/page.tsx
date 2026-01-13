@@ -1,11 +1,15 @@
+"use client";
+
 import Announcements from "@/app/components/Announcements";
 import BigCalendar from "@/app/components/BigCalender";
 import Performance from "@/app/components/Performance";
-import { role } from "@/lib/data";
+import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 
 const SingleStudentPage = () => {
+  const {isLoaded, isSignedIn, user} = useUser()
+  const role = user?.publicMetadata?.role as string | undefined
   return (
     <div className="flex-1 p-4 flex flex-col gap-4 xl:flex-row">
       {/* LEFT */}

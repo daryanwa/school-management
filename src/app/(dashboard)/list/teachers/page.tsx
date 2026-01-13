@@ -1,21 +1,17 @@
-import Announcements from "@/app/components/Announcements";
-import BigCalendar from "@/app/components/BigCalender";
-import EventCalendar from "@/app/components/EventCalendar";
+
 import FormModal from "@/app/components/FormModal";
 import Pagination from "@/app/components/Pagination";
 import Table from "@/app/components/Table";
 import TableSearch from "@/app/components/TableSearch";
 import { Class, Prisma, Subject, Teacher } from "@/generated/prisma/client";
-import { role, teachersData } from "@/lib/data";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
 type TeacherList = Teacher & {subjects: Subject[]} & {classes: Class[]}
-
-
 
 const TeacherListPage = async({searchParams} : {searchParams: {[key: string]: string | undefined}}) => {
 
@@ -28,6 +24,11 @@ const TeacherListPage = async({searchParams} : {searchParams: {[key: string]: st
 
   // url params conditiob
 
+  // const user = await currentUser()
+  // const role = user?.publicMetadata?.role as string | undefined
+
+  const { sessionClaims } = await auth();
+  const role = (sessionClaims?.metadata as { role?: string })?.role;
 
   const query: Prisma.TeacherWhereInput = {}
 
@@ -99,11 +100,7 @@ const columns = [
   },
 ];
 
-const renderRow = (item: TeacherList) => {
-
-
-
-
+const createRenderRow = (role: string | undefined) => (item: TeacherList) => {
   return (
     <tr
       key={item.id}
@@ -128,15 +125,12 @@ const renderRow = (item: TeacherList) => {
       <td className="hidden md:table-cell">{item.address}</td>
       <td>
         <div className="flex items-center gap-2">
-          <Link href="/list/teachers/${item.id}">
+          <Link href={`/list/teachers/${item.id}`}>
             <button className="w-7 h-7 flex items-center justify-center rounded-full bg-lamaSky">
               <Image src="/view.png" alt="" width={16} height={16} />
             </button>
           </Link>
           {role === "admin" && (
-            // <button className="w-7 h-7 flex items-center justify-center rounded-full bg-lamaPurple">
-            //   <Image src="/delete.png" alt="" width={16} height={16} />
-            // </button>
             <FormModal table="teacher" type="delete" id={Number(item.id)} />
           )}
         </div>
@@ -174,7 +168,7 @@ const renderRow = (item: TeacherList) => {
         </div>
       </div>
       {/* list */}
-      <Table columns={columns} renderRow={renderRow} data={data} />
+      <Table columns={columns} renderRow={createRenderRow(role)} data={data} />
       <div className=""></div>
       {/* pagination */}
       <div className="">

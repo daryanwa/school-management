@@ -1,17 +1,14 @@
-import Announcements from "@/app/components/Announcements";
-import BigCalendar from "@/app/components/BigCalender";
-import EventCalendar from "@/app/components/EventCalendar";
 import FormModal from "@/app/components/FormModal";
 import Pagination from "@/app/components/Pagination";
 import Table from "@/app/components/Table";
 import TableSearch from "@/app/components/TableSearch";
 import { Class, Prisma, Teacher } from "@/generated/prisma/client";
-import { classesData, role } from "@/lib/data";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
+import { currentUser } from "@clerk/nextjs/server";
 import Image from "next/image";
-import Link from "next/link";
 import React from "react";
+
 
 type ClassList = Class & { supervisor: Teacher };
 
@@ -40,7 +37,7 @@ const columns = [
   },
 ];
 
-const renderRow = (item: ClassList) => {
+const createRenderRow = (role: string | undefined) => (item: ClassList) => {
   return (
     <tr
     key={item.id}
@@ -75,6 +72,9 @@ const ClassesListPage = async ({
   const { page, ...queryParams } = searchParams;
 
   const p = page ? parseInt(page) : 1;
+
+  const user = await currentUser()
+  const role = user?.publicMetadata?.role as string | undefined
 
   // URL PARAMS CONDITION
 
@@ -131,7 +131,7 @@ const ClassesListPage = async ({
         </div>
       </div>
       {/* list */}
-      <Table columns={columns} renderRow={renderRow} data={data} />
+      <Table columns={columns} renderRow={createRenderRow(role)} data={data} />
       <div className=""></div>
       {/* pagination */}
       <div className="">

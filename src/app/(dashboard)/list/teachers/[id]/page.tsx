@@ -1,12 +1,19 @@
+"use client";
+
 import Announcements from "@/app/components/Announcements";
 import BigCalendar from "@/app/components/BigCalender";
 import FormModal from "@/app/components/FormModal";
 import Performance from "@/app/components/Performance";
-import { role } from "@/lib/data";
+import { useUser } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import Image from "next/image";
 import Link from "next/link";
 
-const SingleTeacherPage = () => {
+const SingleTeacherPage = async() => {
+  const { sessionClaims } = await auth();
+  const role = (sessionClaims?.metadata as { role?: string })?.role;
+
+  // const role = user?.publicMetadata.role as string | undefined
   return (
     <div className="flex-1 p-4 flex flex-col gap-4 xl:flex-row">
       {/* LEFT */}

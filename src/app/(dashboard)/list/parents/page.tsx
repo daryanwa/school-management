@@ -1,13 +1,12 @@
-import Announcements from "@/app/components/Announcements";
-import BigCalendar from "@/app/components/BigCalender";
-import EventCalendar from "@/app/components/EventCalendar";
-import FormModal from "@/app/components/FormModal";
+"use client";
+
 import Pagination from "@/app/components/Pagination";
 import Table from "@/app/components/Table";
 import TableSearch from "@/app/components/TableSearch";
-import { parentsData, role } from "@/lib/data";
+import { parentsData } from "@/lib/data";
+import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
-import Link from "next/link";
+import FormModal from "@/app/components/FormModal";
 import React from "react";
 
 type Parent = {
@@ -43,7 +42,7 @@ const columns = [
   },
 ];
 
-const renderRow = (item: Parent) => {
+const createRenderRow = (role: string | undefined) => (item: Parent) => {
   return (
     <tr
       key={item.id}
@@ -73,6 +72,9 @@ const renderRow = (item: Parent) => {
 };
 
 const ParentsListPage = () => {
+  const {isLoaded, isSignedIn, user} = useUser()
+  const role = user?.publicMetadata?.role as string | undefined
+
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
       {/* top */}
@@ -92,11 +94,11 @@ const ParentsListPage = () => {
         </div>
       </div>
       {/* list */}
-      <Table columns={columns} renderRow={renderRow} data={parentsData} />
+      <Table columns={columns} renderRow={createRenderRow(role)} data={parentsData} />
       <div className=""></div>
       {/* pagination */}
       <div className="">
-        <Pagination />
+        <Pagination page={0} count={0} />
       </div>
     </div>
   );

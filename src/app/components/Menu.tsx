@@ -1,6 +1,12 @@
+
+
+import { useUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import Image from "next/image";
 import Link from "next/link";
-import { role } from "@/lib/data";
+
+
+// import { role } from "@/lib/data";
 
 const menuItems = [
   {
@@ -117,7 +123,19 @@ const menuItems = [
   },
 ];
 
-const Menu = () => {
+
+
+const Menu = async() => {
+
+
+  // const {isLoaded, isSignedIn, user} = useUser()
+
+  // const role = user?.publicMetadata.role
+
+  const user = await currentUser();
+  const role = user?.publicMetadata.role as string;
+ 
+
   return (
     <div className="mt-4 text-sm">
       {menuItems.map((i) => (
@@ -126,12 +144,12 @@ const Menu = () => {
             {i.title}
           </span>
           {i.items.map((item) => {
-            if (item.visible.includes(role)) {
+            if (role && item.visible.includes(String(role))) {
               return (
                 <Link
                   href={item.href}
                   key={item.label}
-                  className="flex items-center justify-center lg:justify-start gap-4 text-gray-500 py-2 md:px-2 rounded-md md:px-2 hover:bg-lamaSkyLight">
+                  className="flex items-center justify-center lg:justify-start gap-4 text-gray-500 py-2 md:px-2 rounded-md hover:bg-lamaSkyLight">
                   <Image src={item.icon} alt="" width={20} height={20} />
                   <span className="hidden lg:block">{item.label}</span>
                 </Link>

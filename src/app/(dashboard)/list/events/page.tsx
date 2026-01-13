@@ -11,10 +11,10 @@ import {
   eventsData,
   examsData,
   resultsData,
-  role,
 } from "@/lib/data";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
+import { currentUser } from "@clerk/nextjs/server";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -52,7 +52,7 @@ const columns = [
   },
 ];
 
-const renderRow = (item: EventList) => {
+const createRenderRow = (role: string | undefined) => (item: EventList) => {
   return (
     <tr
     key={item.id}
@@ -104,6 +104,9 @@ const EventsListPage = async ({
 
   // URL PARAMS CONDITION
 
+  const user = await currentUser()
+  const role = user?.publicMetadata?.role as string | undefined
+
   const query: Prisma.EventWhereInput = {};
 
   if (queryParams) {
@@ -154,7 +157,7 @@ const EventsListPage = async ({
         </div>
       </div>
       {/* list */}
-      <Table columns={columns} renderRow={renderRow} data={data} />
+      <Table columns={columns} renderRow={createRenderRow(role)} data={data} />
       <div className=""></div>
       {/* pagination */}
       <div className="">

@@ -6,9 +6,9 @@ import Pagination from "@/app/components/Pagination";
 import Table from "@/app/components/Table";
 import TableSearch from "@/app/components/TableSearch";
 import { Class, Prisma, Student } from "@/generated/prisma/client";
-import { role, studentsData } from "@/lib/data";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
+import { currentUser } from "@clerk/nextjs/server";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -44,7 +44,10 @@ const columns = [
   },
 ];
 
-const renderRow = (item: StudentList) => {
+const createRenderRow = (role: string | undefined) => (item: StudentList) => {
+
+
+
   return (
     <tr
       key={item.id}
@@ -88,6 +91,9 @@ const StudentListPage = async({searchParams} : {searchParams: {[key: string]: st
   const {page, ...queryParams} = searchParams
 
   const p = page ? parseInt(page) : 1
+
+  const user = await currentUser()
+  const role = user?.publicMetadata?.role as string | undefined
 
   const query: Prisma.StudentWhereInput = {}
 
@@ -152,7 +158,7 @@ const StudentListPage = async({searchParams} : {searchParams: {[key: string]: st
         </div>
       </div>
       {/* list */}
-      <Table columns={columns} renderRow={renderRow} data={data} />
+      <Table columns={columns} renderRow={createRenderRow(role)} data={data} />
       <div className=""></div>
       {/* pagination */}
       <div className="">
